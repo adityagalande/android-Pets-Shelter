@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.petsshelter.Data.PetContract;
 import com.example.petsshelter.Data.PetDbHelper;
@@ -38,8 +40,9 @@ public class CatalogActivity extends AppCompatActivity {
 
         displayDatabaseInfo();
 
-//        PetDbHelper mDbHelper = new PetDbHelper(this);
-//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        PetDbHelper mDbHelper = new PetDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
     }
 
 
@@ -68,21 +71,42 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_catalog, menu);
         return true;
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch ((item.getItemId())){
+        switch ((item.getItemId())) {
             case R.id.action_insert_dummy_data:
+                insertPet();
+                displayDatabaseInfo();
+                return true;
             case R.id.action_delete_all_entries:
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void insertPet() {
+        PetDbHelper petDbHelper = new PetDbHelper(this);
+        SQLiteDatabase db = petDbHelper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, "Toto");
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, "Terrier");
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 7);
+
+        db.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
     }
 }

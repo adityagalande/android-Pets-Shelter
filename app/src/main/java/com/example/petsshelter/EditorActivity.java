@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -13,8 +15,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.petsshelter.Data.PetContract;
+import com.example.petsshelter.Data.PetDbHelper;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -28,6 +32,7 @@ public class EditorActivity extends AppCompatActivity {
      * 0 for unknown gender, 1 for male, 2 for female.
      */
     private int mGender = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +97,8 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                insertData();
+                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -105,5 +111,28 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void insertData() {
+
+        PetDbHelper petDbHelper = new PetDbHelper(this);
+        SQLiteDatabase sqLiteDatabase = petDbHelper.getWritableDatabase();
+
+        String name = mNameEditText.getText().toString().trim();
+        String breed = mBreedEditText.getText().toString().trim();
+        String weight = mWeightEditText.getText().toString().trim();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_NAME, name);
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_BREED, breed);
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
+        contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, Integer.parseInt(weight));
+
+        long newRowID = sqLiteDatabase.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+
+        if(newRowID == -1) Toast.makeText(this, "Error to saving pet!!!", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "Pet saved with row ID "+newRowID, Toast.LENGTH_SHORT).show();
+
     }
 }
