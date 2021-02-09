@@ -21,7 +21,7 @@ public class PetDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    //OnCreate Method call when DB is created first time
+    //OnCreate Method call when DB is created first time otherwise use existing
     public void onCreate(SQLiteDatabase db) {
         //Write CREATE TABLE statement Here by using PetContract.PetEntry CONSTANT'S
         String SQL_CREATE_PETS_TABLE = " CREATE TABLE " + PetEntry.TABLE_NAME + "(" + PetEntry._id + " INTEGER PRIMARY KEY AUTOINCREMENT, " + PetEntry.COLUMN_PET_NAME + " TEXT NOT NULL, " + PetEntry.COLUMN_PET_BREED + " TEXT, " + PetEntry.COLUMN_PET_GENDER + " INTEGER NOT NULL, " + PetEntry.COLUMN_PET_WEIGHT + " INTEGER NOT NULL DEFAULT 0 ); ";
