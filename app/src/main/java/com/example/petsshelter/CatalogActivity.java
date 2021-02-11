@@ -55,20 +55,55 @@ public class CatalogActivity extends AppCompatActivity {
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+<<<<<<< HEAD
         String[] projection = {PetContract.PetEntry.COLUMN_PET_NAME, PetContract.PetEntry.COLUMN_PET_BREED, PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.COLUMN_PET_WEIGHT};
         String selection = PetContract.PetEntry.COLUMN_PET_GENDER + "=?";
         String[] selectionArgs = new String[] {PetContract.PetEntry.COLUMN_PET_GENDER};
 
         Cursor cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection,selection, selectionArgs, null,null,null);
 
+=======
+        //Below are column name which we are interested in, it is string of array
+//        String[] projection = {PetContract.PetEntry.COLUMN_PET_NAME, PetContract.PetEntry.COLUMN_PET_BREED, PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.COLUMN_PET_WEIGHT};
+        String[] projection = {};
+//        String selection = PetContract.PetEntry.COLUMN_PET_GENDER + "=?";
+//        String[] selectionArgs = new String[] {PetContract.PetEntry.COLUMN_PET_GENDER};
+
+        Cursor cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection, null, null, null,null,null);
+
+        displayView = (TextView) findViewById(R.id.text_view_pet);
+>>>>>>> dev1
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
 //        Cursor cursor = db.rawQuery("SELECT * FROM " + PetContract.PetEntry.TABLE_NAME, null);
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
-            displayView = (TextView) findViewById(R.id.text_view_pet);
-            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
+
+            displayView.setText("The pets table contains " + cursor.getCount() + " Pets.\n \n");
+
+            displayView.append(PetContract.PetEntry._id + " | " + PetContract.PetEntry.COLUMN_PET_NAME + " | " + PetContract.PetEntry.COLUMN_PET_BREED + " | " + PetContract.PetEntry.COLUMN_PET_GENDER + " | " + PetContract.PetEntry.COLUMN_PET_WEIGHT + " \n ");
+
+            int ID_column, Name_column, Breed_column, Weight_column, Gender_column;
+
+            ID_column = cursor.getColumnIndex(PetContract.PetEntry._id);
+            Name_column = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_NAME);
+            Breed_column = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_BREED);
+            Weight_column = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_WEIGHT);
+            Gender_column = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_GENDER);
+
+
+            //.moveToNext() is BOOLEAN thing
+            while (cursor.moveToNext()){
+                int id = cursor.getInt(ID_column);
+                String name = cursor.getString(Name_column);
+                String breed = cursor.getString(Breed_column);
+                int weight = cursor.getInt(Weight_column);
+                int gender = cursor.getInt(Gender_column);
+
+                displayView.append("\n"+id+" | "+name+" | "+breed+" | "+weight+" | "+gender);
+            }
+
         } finally {
             // Always close the cursor when you're done reading from it. This releases all its
             // resources and makes it invalid.
