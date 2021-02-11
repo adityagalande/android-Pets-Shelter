@@ -84,6 +84,7 @@ public class CatalogActivity extends AppCompatActivity {
             Gender_column = cursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_GENDER);
 
 
+            //.moveToNext() is BOOLEAN thing
             while (cursor.moveToNext()){
                 int id = cursor.getInt(ID_column);
                 String name = cursor.getString(Name_column);
