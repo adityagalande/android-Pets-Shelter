@@ -6,6 +6,7 @@ import androidx.core.app.NavUtils;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -129,10 +130,13 @@ public class EditorActivity extends AppCompatActivity {
         contentValues.put(PetContract.PetEntry.COLUMN_PET_GENDER, mGender);
         contentValues.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, Integer.parseInt(weight));
 
-        long newRowID = sqLiteDatabase.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+        Uri newUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, contentValues);
 
-        if(newRowID == -1) Toast.makeText(this, "Error to saving pet!!!", Toast.LENGTH_SHORT).show();
-        else Toast.makeText(this, "Pet saved with row ID "+newRowID, Toast.LENGTH_SHORT).show();
+        if (newUri != null) {
+            Toast.makeText(this, "Error to saving pet!!!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Pet saved with row ID ", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
