@@ -50,24 +50,20 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
-        PetDbHelper mDbHelper = new PetDbHelper(this);
+//        PetDbHelper mDbHelper = new PetDbHelper(this);
 
         // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-//        String[] projection = {PetContract.PetEntry.COLUMN_PET_NAME, PetContract.PetEntry.COLUMN_PET_BREED, PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.COLUMN_PET_WEIGHT};
-//        String selection = PetContract.PetEntry.COLUMN_PET_GENDER + "=?";
-//        String[] selectionArgs = new String[] {PetContract.PetEntry.COLUMN_PET_GENDER};
-//
-//        Cursor cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection,selection, selectionArgs, null,null,null);
+        String[] projection = {PetContract.PetEntry._ID,
+                PetContract.PetEntry.COLUMN_PET_NAME,
+                PetContract.PetEntry.COLUMN_PET_GENDER,
+                PetContract.PetEntry.COLUMN_PET_WEIGHT,
+                PetContract.PetEntry.COLUMN_PET_BREED};
 
-        //Below are column name which we are interested in, it is string of array
-//        String[] projection = {PetContract.PetEntry.COLUMN_PET_NAME, PetContract.PetEntry.COLUMN_PET_BREED, PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.COLUMN_PET_WEIGHT};
-        String[] projection = {};
-//        String selection = PetContract.PetEntry.COLUMN_PET_GENDER + "=?";
-//        String[] selectionArgs = new String[] {PetContract.PetEntry.COLUMN_PET_GENDER};
+        Cursor cursor = getContentResolver().query(PetContract.PetEntry.CONTENT_URI, projection, null, null, null);
 
-        Cursor cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection, null, null, null, null, null);
+//        Cursor cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection, null, null, null, null, null);
 
         displayView = (TextView) findViewById(R.id.text_view_pet);
         // Perform this raw SQL query "SELECT * FROM pets"

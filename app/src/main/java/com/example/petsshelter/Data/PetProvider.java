@@ -13,13 +13,11 @@ import androidx.annotation.Nullable;
 
 public class PetProvider extends ContentProvider {
 
-    //Database helper object
+    //Create and Initialize PetDBHelper Database helper object to Gain access
     private PetDbHelper mPetDbHelper;
 
     private static final int PETS = 100;
     private static final int PETS_ID = 101;
-
-
 
 
     private static final UriMatcher sURI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
@@ -32,8 +30,6 @@ public class PetProvider extends ContentProvider {
 
         sURI_MATCHER.addURI(PetContract.CONTENT_AUTHORITY, PetContract.PATH_PETS + "/#", PETS_ID);
     }
-
-
 
 
     @Override
@@ -51,17 +47,21 @@ public class PetProvider extends ContentProvider {
 
 
         int match = sURI_MATCHER.match(uri);
-        switch (match){
+        switch (match) {
             case PETS:
                 cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
 
             case PETS_ID:
                 selection = PetContract.PetEntry._ID + "=?";
-                selection = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(PetContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Can't query unknown Uri " + uri);
         }
 
-        return null;
+        return cursor;
     }
 
     @Nullable
