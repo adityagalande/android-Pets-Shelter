@@ -7,12 +7,15 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class PetProvider extends ContentProvider {
 
+    private static final String LOG_TAG = PetProvider.class.getSimpleName();
     //Create and Initialize PetDBHelper Database helper object to Gain access
     private PetDbHelper mPetDbHelper;
 
@@ -73,7 +76,48 @@ public class PetProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+
+        int match = sURI_MATCHER.match(uri);
+
+        switch (match){
+            case PETS:
+                insertPet(uri, values);
+                break;
+            default:
+                throw new IllegalArgumentException("Can't query unknown Uri " + uri);
+        }
         return null;
+    }
+
+    private Uri insertPet(Uri uri, ContentValues contentValues) {
+
+        String name = contentValues.getAsString(PetContract.PetEntry.COLUMN_PET_NAME);
+
+        if(name == null){
+            throw new IllegalArgumentException("Pet requires name!");
+        }
+
+        Integer Gender = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
+
+        if(Gender == null || !PetContract.PetEntry.isValidGender(Gender)){
+            throw new IllegalArgumentException("Pet requires valid weight!");
+        }
+
+        Integer Weight = contentValues.getAsInteger(PetContract.PetEntry.COLUMN_PET_WEIGHT);
+
+        if(Weight != null && Weight < 0){
+            throw new IllegalArgumentException("Pet requires valid weight!");
+        }
+
+        SQLiteDatabase db = mPetDbHelper.getWritableDatabase();
+
+        long id = db.insert(PetContract.PetEntry.TABLE_NAME, null, contentValues);
+
+        if(id == -1){
+            Log.e(LOG_TAG, "Failed to insert data!" + uri);
+        }
+
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
