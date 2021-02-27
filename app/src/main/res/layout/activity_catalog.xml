@@ -6,12 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".CatalogActivity">
 
-    <TextView
-        android:id="@+id/text_view_pet"
-        android:textColor="@color/black"
+<!--    <TextView-->
+<!--        android:id="@+id/text_view_pet"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:padding="16dp"/>-->
+
+    <ListView
+        android:id="@+id/list_view_pet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"/>
+        android:layout_margin="10dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
