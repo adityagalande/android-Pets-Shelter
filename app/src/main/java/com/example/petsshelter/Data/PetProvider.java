@@ -64,6 +64,7 @@ public class PetProvider extends ContentProvider {
                 throw new IllegalArgumentException("Can't query unknown Uri " + uri);
         }
 
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -125,6 +126,8 @@ public class PetProvider extends ContentProvider {
             Log.e(LOG_TAG, "Failed to insert data!" + uri);
         }
 
+        //It notify all listeners that data has changed for pet content uri
+        getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, id);
     }
 
