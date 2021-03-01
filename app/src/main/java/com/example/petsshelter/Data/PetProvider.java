@@ -66,6 +66,7 @@ public class PetProvider extends ContentProvider {
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
+
     }
 
     @Nullable
@@ -126,7 +127,7 @@ public class PetProvider extends ContentProvider {
             Log.e(LOG_TAG, "Failed to insert data!" + uri);
         }
 
-        //It notify all listeners that data has changed for pet content uri
+        // Notify all listeners that the data has changed for the pet content URI
         getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, id);
     }
@@ -135,18 +136,34 @@ public class PetProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = mPetDbHelper.getWritableDatabase();
 
+        // Track the number of rows that were deleted
+        int rowsDeleted;
+
         final int match = sURI_MATCHER.match(uri);
 
-        switch (match){
+        switch (match) {
             case PETS:
-                return db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
+                // Delete all rows that match the selection and selection args
+                rowsDeleted = db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+//                return db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
             case PETS_ID:
-                selection = PetContract.PetEntry._ID+"=?";
-                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
+                selection = PetContract.PetEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+//                return db.delete(PetContract.PetEntry.TABLE_NAME, selection, selectionArgs);
             default:
-                throw new IllegalArgumentException("Delection is not supported for this Uri "+ uri);
+                throw new IllegalArgumentException("Delection is not supported for this Uri " + uri);
         }
+        // If 1 or more rows were deleted, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // Return the number of rows deleted
+        return rowsDeleted;
     }
 
     @Override
@@ -198,6 +215,15 @@ public class PetProvider extends ContentProvider {
 
         SQLiteDatabase db = mPetDbHelper.getWritableDatabase();
 
-        return db.update(PetContract.PetEntry.TABLE_NAME, values, selection, selectionArgs);
+        int rowsUpdated = db.update(PetContract.PetEntry.TABLE_NAME, values, selection, selectionArgs);
+
+        // If 1 or more rows were updated, then notify all listeners that the data at the
+        // given URI has changed
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+
+//        return db.update(PetContract.PetEntry.TABLE_NAME, values, selection, selectionArgs);
+        }
+        return rowsUpdated;
     }
 }
