@@ -9,6 +9,7 @@ import androidx.loader.content.Loader;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,7 +61,19 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         mPetCursorAdapter = new PetCursorAdapter(this, null);
         listView.setAdapter(mPetCursorAdapter);
 
-        getLoaderManager().initLoader(PET_LOADER, null, this);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                This Intent passes the Uri and ID of that Pet(View(In that listView)) to get ID of that pet
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+//                For example the URI would be content://com.example.petsshelter/pets/pets/2 ---------------(2 is ID)---&---(content uri for path)
+                Uri CurrentPetUri = ContentUris.withAppendedId(PetContract.PetEntry.CONTENT_URI, id);
+                intent.setData(CurrentPetUri);
+                startActivity(intent);
+            }
+        });
+
+        getSupportLoaderManager().initLoader(PET_LOADER, null, this);
 
     }
 
